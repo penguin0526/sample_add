@@ -5,8 +5,13 @@ class ListsController < ApplicationController
 
   def create
     list=List.new(list_params)
-    list.save
-    redirect_to list_path(list.id)
+    if @list.save
+      flash[:notice] = "投稿に成功しました。"
+    　redirect_to list_path(list.id)
+    else
+      flash[:notice] = "投稿に失敗しました。"
+      render :new
+    end
   end
 
   def index
@@ -14,17 +19,22 @@ class ListsController < ApplicationController
   end
 
   def show
-    @list=List.find(params[:id])
+    @list = List.find(params[:id])
   end
 
   def edit
     @list=List.find(params[:id])
   end
 
+
   def destroy
     list = List.find(params[:id])
-    list.destroy
-    redirect_to '/lists'
+    if list.destroy
+      flash[:notice] = "リストを削除しました。" # 削除が成功した場合にフラッシュメッセージを設定
+    else
+      flash[:alert] = "リストの削除に失敗しました。" # 削除が失敗した場合にフラッシュメッセージを設定
+    end
+    redirect_to list_path(@list.id)
   end
 
   def update
